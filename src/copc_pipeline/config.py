@@ -17,6 +17,7 @@ class PipelineConfig(BaseSettings):
 
     tile_grid_n: int = 16
     max_points_per_tile: int = 6_000_000
+    max_tile_split_depth: int = 3
 
     voxel_size: float = 1.0
     ground_cell_size: float = 2.0
