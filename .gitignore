@@ -208,4 +208,5 @@ warehouse/
 *.laz
 *.copc.laz
 dagster_home/
+.tmp_dagster_home_*/
 .dg/
