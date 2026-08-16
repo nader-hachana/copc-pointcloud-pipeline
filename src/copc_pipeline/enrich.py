@@ -98,6 +98,7 @@ def aggregate_voxels(
     z: np.ndarray,
     hag: np.ndarray,
     intensity: np.ndarray,
+    ground_z_per_point: np.ndarray,
     origin_x: float,
     origin_y: float,
     origin_z: float,
@@ -112,6 +113,12 @@ def aggregate_voxels(
     Every statistic here comes from a plain sum, count, sum, sum of squares,
     mean and standard deviation are derived from those afterward, on
     purpose: one pattern, reused for every column, nothing fancier needed.
+
+    ground_z_per_point is each point's own cell's ground estimate, the same
+    lookup height_above_ground already does, passed in rather than
+    recomputed here, so every voxel also carries the ground level it was
+    measured against, useful later for a downstream consumer without having
+    to reconstruct it from height above ground and elevation.
     """
     vx = ((x - origin_x) / voxel_size).astype(np.int64)
     vy = ((y - origin_y) / voxel_size).astype(np.int64)
@@ -131,6 +138,7 @@ def aggregate_voxels(
     z_mean, z_std = mean_and_std(z)
     hag_mean, _ = mean_and_std(hag)
     intensity_mean, _ = mean_and_std(intensity)
+    ground_z_mean, _ = mean_and_std(ground_z_per_point)
 
     return {
         "x_center": origin_x + (unique_keys[:, 0] + 0.5) * voxel_size,
@@ -142,6 +150,7 @@ def aggregate_voxels(
         "z_std": z_std,
         "hag_mean": hag_mean,
         "intensity_mean": intensity_mean,
+        "ground_z": ground_z_mean,
     }
 
 

@@ -54,13 +54,17 @@ def test_aggregate_voxels_computes_correct_stats_for_one_voxel():
     z = np.array([0.1, 0.2, 0.3, 0.4])
     hag = np.array([1.0, 2.0, 3.0, 4.0])
     intensity = np.array([10.0, 20.0, 30.0, 40.0])
+    ground_z_per_point = np.array([5.0, 5.0, 5.0, 5.0])
 
-    voxels = aggregate_voxels(x, y, z, hag, intensity, origin_x=0, origin_y=0, origin_z=0, voxel_size=1.0)
+    voxels = aggregate_voxels(
+        x, y, z, hag, intensity, ground_z_per_point, origin_x=0, origin_y=0, origin_z=0, voxel_size=1.0
+    )
 
     assert len(voxels["n_points"]) == 1
     assert voxels["n_points"][0] == 4
     assert voxels["z_mean"][0] == np.mean(z)
     assert voxels["hag_mean"][0] == np.mean(hag)
+    assert voxels["ground_z"][0] == 5.0
     assert voxels["x_center"][0] == 0.5  # centre of the voxel from 0 to 1
 
 
