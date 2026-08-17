@@ -5,8 +5,6 @@ network access, so all of it is unit tested with small made up point clouds
 instead of the real file.
 """
 
-from __future__ import annotations
-
 import numpy as np
 from scipy.ndimage import distance_transform_edt
 

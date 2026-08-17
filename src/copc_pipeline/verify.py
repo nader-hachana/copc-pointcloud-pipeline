@@ -5,8 +5,6 @@ concepts beyond what earlier steps already built. Meant to be run once after
 load_warehouse, from the command line.
 """
 
-from __future__ import annotations
-
 import sys
 
 import duckdb

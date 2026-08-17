@@ -8,8 +8,6 @@ wraps that call and adds a typed summary of the header and octree root
 page, it does not change how any of the fetching itself works.
 """
 
-from __future__ import annotations
-
 from dataclasses import dataclass
 
 from laspy.copc import CopcReader

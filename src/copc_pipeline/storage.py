@@ -7,8 +7,6 @@ time, tile parts, the manifest, and the source metadata table all load
 through one bulk statement each.
 """
 
-from __future__ import annotations
-
 from pathlib import Path
 
 import duckdb

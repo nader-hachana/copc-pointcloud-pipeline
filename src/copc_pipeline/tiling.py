@@ -7,8 +7,6 @@ memory bounded: each tile gets streamed and processed on its own later,
 instead of loading the whole file at once.
 """
 
-from __future__ import annotations
-
 from dataclasses import dataclass
 
 import numpy as np
