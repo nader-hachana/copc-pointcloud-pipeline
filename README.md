@@ -31,6 +31,10 @@ Real screenshot from the Dagster UI, `copc_pipeline_job`'s graph view.
 
 - [`uv`](https://docs.astral.sh/uv/getting-started/installation/)
 - Python is pinned to 3.12 by `.python-version`, `uv` installs it automatically
+- Commands below assume a Unix-style shell (macOS, Linux, or on Windows,
+  WSL or Git Bash). Native PowerShell/cmd users will need to swap `rm -rf`
+  for `Remove-Item -Recurse -Force` and adjust the env-var lines
+  (`$env:COPC_SOURCE_URI = "..."`, `` ` `` instead of `\` to continue a line).
 
 ## Setup
 
@@ -173,3 +177,23 @@ explicit about:
 Full build history, including every real pivot, dead end, and verification
 step with real numbers, is kept outside this repo in a build log, available
 on request.
+
+## Known limitations
+
+- **Height above ground can never show as negative, which can hide real low
+  spots.** `height_above_ground` works out `point elevation - ground
+  elevation for its cell`, then pushes any negative result up to `0`, since
+  a point should not show as being below its own ground. About 10% of
+  points in each cell come out slightly negative before this happens, that
+  part is expected, the ground value is the cell's 10th percentile, so
+  roughly 10% of a cell's own points naturally sit below it. But on the
+  real file, one cell genuinely holds two very different real surfaces,
+  2,576 points ranging from `z=-25.38m` up to `z=48.15m`, all in the same 2
+  meter by 2 meter square. Most of those points belong to the higher
+  surface, so the ground value picked for that cell is high too. One real
+  point on the lower surface works out to `73.376m` below that ground
+  value, but after being pushed up to 0, it just shows as `0.0`, "at
+  ground," hiding that it was actually much lower. Right now the pipeline
+  cannot tell "a point right at ground level" apart from "a point in a real
+  low spot that happens to share a cell with something much higher." Not
+  fixed, given the time available, noted here instead of left hidden.
