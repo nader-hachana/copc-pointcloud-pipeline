@@ -27,6 +27,18 @@ Real screenshot from the Dagster UI, `copc_pipeline_job`'s graph view.
 - `collect_parts_op` waits for every tile to finish, then `load_warehouse_op`
   bulk loads all the Parquet files into DuckDB in one statement.
 
+**Retries and error handling**: every op that touches the network or a file
+has a real `RetryPolicy`, `process_tile_op` retries up to 3 times with
+exponential backoff (a single bad tile shouldn't fail the whole run),
+`read_source_metadata_op`, `plan_tiles_op`, and `load_warehouse_op` retry up
+to 2 times. `collect_parts_op` has no retry policy, it only does in-memory
+work on results that already succeeded, nothing external to fail. Every op
+logs through Dagster's structured `context.log`, visible per-step in the
+UI. Retries were verified for real, not just configured: pointing
+`COPC_SOURCE_URI` at a URL that doesn't exist produces real
+`STEP_UP_FOR_RETRY` events, 3 genuine attempts, then a clean `STEP_FAILURE`
+and `success: False`, rather than hanging or silently succeeding.
+
 ## Prerequisites
 
 - [`uv`](https://docs.astral.sh/uv/getting-started/installation/)
@@ -88,6 +100,15 @@ Launchpad) if you want a smaller run, since config is read from real
 environment variables, not Dagster's own config system.
 
 ## Verifying the output
+
+**Bounded memory**, streams the 10 largest real tiles straight from the
+live S3 file and prints points fetched, time, and peak memory per tile.
+Proves memory rises briefly then plateaus, instead of climbing tile after
+tile:
+
+```bash
+uv run python -m copc_pipeline.verify_streaming
+```
 
 **Data quality checks**, 4 real checks against the loaded warehouse (has
 data, no null/empty voxels, height above ground never negative, and a
